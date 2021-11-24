@@ -5,7 +5,7 @@ Baza danych składa się z raportu sprzedaży dziennej wraz ze szczegółowymi i
 Wymienione raporty zostały zaczytane do bazy danych PostgreSQL, połączone kluczem głównym (Nazwa Sklepu) i następnie wykorzystując tabele tymczasowe oraz CTE (common table expression) zostały opracowane przykładowe widoki.
 
 Zrzut z bazy danych:
-![original_ds](screen/original_ds.PNG)
+![original_ds](screen/original_ds.png)
 
 <br>
 
