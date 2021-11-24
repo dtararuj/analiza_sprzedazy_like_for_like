@@ -35,12 +35,12 @@ CREATE TABLE IF NOT EXISTS public.analogi AS
 	SELECT
 	 "Data",
 	 "Sklep",
-	 "Obrot_netto" as "obrot",
-	 "Marza_netto" as "GM",
-	 "realizacji_planu%" as "plan",
-	 "Ilosc_sztuk" as "ilosc",
+	 "Obrot_netto" 		AS "obrot",
+	 "Marza_netto" 		AS "GM",
+	 "realizacji_planu%" 	AS "plan",
+	 "Ilosc_sztuk" 		AS "ilosc",
 	 "Ilosc_paragonow",
-	 "Sztuka"  	   as "AUR",
+	 "Sztuka"  	   	AS "AUR",
 	 "Check",
 	 "Koszyk",
 	 "Skutecznosc",
@@ -61,13 +61,13 @@ CREATE temp table robocza_1 AS(
 		  EXTRACT (month FROM analogi."Data") AS miesiac,
 		  EXTRACT (week FROM analogi."Data")  AS tydzien,
 		  EXTRACT (dow FROM analogi."Data")   AS nr_dnia,
-		  TO_CHAR(analogi."Data", 'day') 	  AS dzien
+		  TO_CHAR(analogi."Data", 'day')      AS dzien
 		FROM analogi
 		JOIN (SELECT
 				"Miasto",
-				"Data"						  AS "data_otwarcia"
+				"Data"		      AS "data_otwarcia"
 			  FROM daty
-			  ) as dt
+			  ) 			      AS dt
 		  ON analogi."Sklep" = dt."Miasto" 
 	), CTE2 AS(
 
@@ -119,10 +119,10 @@ CREATE TEMP TABLE pogrupowane AS(
 
 	SELECT 
 		"Sklep",
-		"rok1" AS rok,
-		"tydz_przesuniety1" as tydz_przes,
-		SUM("obrot") AS obrot,
-		"rok1" - 1 AS rok_poprz
+		"rok1"			AS rok,
+		"tydz_przesuniety1" 	AS tydz_przes,
+		SUM("obrot") 		AS obrot,
+		"rok1" - 1 		AS rok_poprz
 	FROM robocza_1
 	GROUP BY 
 		"Sklep",
@@ -138,14 +138,14 @@ CREATE TEMP TABLE obrot_poprz AS(
 	WITH part AS(
 
 		SELECT *
-		FROM pogrupowane as pg1
+		FROM pogrupowane 	AS pg1
 		LEFT JOIN 
 		  (SELECT
-			"Sklep" AS sklep_1,
-			"tydz_przes" AS tydz_przes_1,
-			"rok" AS rok_1,
-			"obrot" AS obrot_1
-		  FROM pogrupowane) as pg2
+			"Sklep" 	AS sklep_1,
+			"tydz_przes" 	AS tydz_przes_1,
+			"rok" 		AS rok_1,
+			"obrot" 	AS obrot_1
+		  FROM pogrupowane) 	AS pg2
 		  ON pg1."Sklep" = pg2."sklep_1"
 			AND pg1."tydz_przes" = pg2."tydz_przes_1"
 			AND pg1."rok_poprz" = pg2."rok_1"
@@ -221,12 +221,12 @@ CREATE TABLE dane_na_dzien AS(
 		  "tydz_przes",
 		  "rok",
 		  "czy_analog",
-		  SUM("obrot")				AS obrot,
-		  SUM("GM")					AS gm,
-		  SUM("plan")				AS plan,
-		  SUM("ilosc")				AS slsu,
+		  SUM("obrot")			AS obrot,
+		  SUM("GM")			AS gm,
+		  SUM("plan")			AS plan,
+		  SUM("ilosc")			AS slsu,
 		  SUM("Ilosc_paragonow")	AS n_paragonow,
-		  SUM("Wejscia")			AS trafik
+		  SUM("Wejscia")		AS trafik
 		FROM tymczas1
 		GROUP BY
 		  "Data",
@@ -252,12 +252,12 @@ CREATE VIEW v_lfl20_per_week AS(
 		  "rok",
 		  "tydz_przes",
 		  "czy_analog",
-		  SUM("obrot")				AS obrot,
-		  SUM("gm")					AS gm,
-		  SUM("plan")				AS plan,
-		  SUM("slsu")				AS slsu,
+		  SUM("obrot")			AS obrot,
+		  SUM("gm")			AS gm,
+		  SUM("plan")			AS plan,
+		  SUM("slsu")			AS slsu,
 		  SUM("n_paragonow")		AS n_paragonow,
-		  SUM("trafik")				AS trafik
+		  SUM("trafik")			AS trafik
 		FROM dane_na_dzien
 		WHERE "czy_analog" = 'tak'
 		  AND trafik >0
@@ -269,8 +269,8 @@ CREATE VIEW v_lfl20_per_week AS(
 		  ROUND("n_paragonow"/"trafik",3)	AS skutecznosc,
 		  ROUND("slsu"/"n_paragonow",2)		AS "check",
 		  ROUND("obrot"/"n_paragonow",2)	AS koszyk,
-		  ROUND("obrot"/"slsu",2)			AS sztuka,
-		  ROUND("gm"/"obrot",4)				AS gm_proc
+		  ROUND("obrot"/"slsu",2)		AS sztuka,
+		  ROUND("gm"/"obrot",4)			AS gm_proc
 		 FROM tymczas2														
 
 );
@@ -286,9 +286,9 @@ SELECT
   "obrot",
   "gm",
   "trafik",
-  1-round(LAG ("obrot") OVER (ORDER BY "rok")/"obrot",2) AS obrot_rr,
-  1-round(LAG ("gm") OVER (ORDER BY "rok")/"gm",2) AS marza_rr,
-  1-round(LAG ("trafik") OVER (ORDER BY "rok")/"trafik",2) AS trafik_rr
+  1-round(LAG ("obrot") OVER (ORDER BY "rok")/"obrot",2) 	AS obrot_rr,
+  1-round(LAG ("gm") OVER (ORDER BY "rok")/"gm",2) 		AS marza_rr,
+  1-round(LAG ("trafik") OVER (ORDER BY "rok")/"trafik",2) 	AS trafik_rr
 FROM v_lfl20_per_week
 WHERE rok IN (2021,2020) 
   AND tydz_przes = '25'
@@ -305,12 +305,12 @@ CREATE VIEW v_lfl20_per_month AS(
 		  "rok",
 		  "miesiac",
 		  "czy_analog",
-		  SUM("obrot")				AS obrot,
-		  SUM("gm")					AS gm,
-		  SUM("plan")				AS plan,
-		  SUM("slsu")				AS slsu,
+		  SUM("obrot")			AS obrot,
+		  SUM("gm")			AS gm,
+		  SUM("plan")			AS plan,
+		  SUM("slsu")			AS slsu,
 		  SUM("n_paragonow")		AS n_paragonow,
-		  SUM("trafik")				AS trafik
+		  SUM("trafik")			AS trafik
 		FROM dane_na_dzien
 		WHERE "czy_analog" = 'tak'
 		  AND trafik >0
@@ -322,8 +322,8 @@ CREATE VIEW v_lfl20_per_month AS(
 		  ROUND("n_paragonow"/"trafik",3)	AS skutecznosc,
 		  ROUND("slsu"/"n_paragonow",2)		AS "check",
 		  ROUND("obrot"/"n_paragonow",2)	AS koszyk,
-		  ROUND("obrot"/"slsu",2)			AS sztuka,
-		  ROUND("gm"/"obrot",4)				AS gm_proc
+		  ROUND("obrot"/"slsu",2)		AS sztuka,
+		  ROUND("gm"/"obrot",4)			AS gm_proc
 		 FROM tymczas3													
 
 );
@@ -334,9 +334,9 @@ SELECT
   "obrot",
   "gm",
   "trafik",
-  1-round(LAG ("obrot") OVER (ORDER BY "rok")/"obrot",2) AS obrot_rr,
-  1-round(LAG ("gm") OVER (ORDER BY "rok")/"gm",2) AS marza_rr,
-  1-round(LAG ("trafik") OVER (ORDER BY "rok")/"trafik",2) AS trafik_rr
+  1-round(LAG ("obrot") OVER (ORDER BY "rok")/"obrot",2) 	AS obrot_rr,
+  1-round(LAG ("gm") OVER (ORDER BY "rok")/"gm",2) 		AS marza_rr,
+  1-round(LAG ("trafik") OVER (ORDER BY "rok")/"trafik",2) 	AS trafik_rr
 FROM v_lfl20_per_month
 WHERE rok IN (2021,2020) 
   AND miesiac = '5'
